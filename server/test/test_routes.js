@@ -1,5 +1,7 @@
 import supertest from 'supertest'
 import mongoose from 'mongoose'
+import {expect} from 'chai'
+
 import app from '../routes'
 
 const request = supertest(app)
@@ -36,5 +38,71 @@ describe('POST /register', () => {
     .send({})
     .expect({status: 'failed', reason: 'missing arguments'}, done)
   })
+
+  it('invalid email', (done) => {
+    request.post('/register')
+    .send({email: '123123', password: '12345678'})
+    .expect({status: 'failed', reason: 'invalid email'}, done)
+  })
+  
+  it('invalid password', (done) => {
+    request.post('/register')
+    .send({email: 'bob@bob.com', password: '1234'})
+    .expect({status: 'failed', reason: 'invalid password'}, done)
+  })
+
+  it('success', (done) => {
+    request.post('/register')
+    .send({email: 'bob@bob.com', password: '12345678'})
+    .expect({status: 'success'}, done)
+  })
+
+  it('duplicate email', (done) => {
+    request.post('/register')
+    .send({email: 'bob@bob.com', password: '12345678'})
+    .expect({status: 'success'}, () => {
+      request.post('/register')
+      .send({email: 'bob@bob.com', password: '12345678'})
+      .expect({status: 'failed', reason:'duplicate email'}, done)
+    })
+  })
 })
 
+describe('POST /login', () => {
+  it('missing arguments', (done) => {
+    request.post('/login')
+    .send({})
+    .expect({status: 'failed', reason: 'missing arguments'}, done)
+  })
+
+  it('invalid user', (done) => {
+    request.post('/login')
+    .send({email: 'bob@bob.com', password: '1234'})
+    .expect({status: 'failed', reason: 'invalid user'}, done)
+  })
+
+  it('to user with bad password', (done) => {
+    request.post('/register')
+    .send({email: 'bob@bob.com', password: '12345678'})
+    .expect({status: 'success'}, () => {
+      request.post('/login')
+      .send({email: 'bob@bob.com', password: '1234'})
+      .expect({status: 'failed', reason: 'invalid password'}, done)
+    })
+  })
+
+  it('to user with good password', (done) => {
+    request.post('/register')
+    .send({email: 'bob@bob.com', password: '12345678'})
+    .expect({status: 'success'}, () => {
+      request.post('/login')
+      .send({email: 'bob@bob.com', password: '12345678'})
+      .end((error, res) => {
+        expect(res.body).to.have.property('status');
+        expect(res.body.status).to.equal('success');
+        expect(res.body).to.have.property('token');
+        done()
+      })
+    })
+  })
+})

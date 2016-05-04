@@ -20,7 +20,7 @@ app.post('/login', (req, res) => {
   User.findOne({email})
     .then((user) => {
       if (user === null) {
-        return Promise.reject('invalid email')
+        return Promise.reject('invalid user')
       }
 
       const passwordHash = User.makePasswordHash(password, user.passwordSalt)
