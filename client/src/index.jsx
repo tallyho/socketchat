@@ -1,13 +1,16 @@
 import ReactDOM from 'react-dom'
 import React from 'react'
+import {createStore, combineReducers} from 'redux'
+import {Provider} from 'react-redux'
+import {user} from './user'
+import App from './components/App'
+import {Map} from 'immutable'
 
-class App extends React.Component {
-  render() {return (
-    <div>Hell3, World!!!!</div>
-  )}
-}
+const store = createStore(combineReducers({user}))
 
 ReactDOM.render(
-  <App />,
+  <Provider store={store}>
+    <App />
+  </Provider>,
   document.getElementById('app')
 );
