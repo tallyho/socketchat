@@ -3,9 +3,9 @@ import bodyParser from 'body-parser'
 import Promise from 'bluebird'
 import jwt from 'jsonwebtoken'
 
+import {jwtSecret} from './config'
 import {User} from './db'
 
-const jwtSecret = 'abc123'
 
 const app = express()
 app.use(bodyParser.json())

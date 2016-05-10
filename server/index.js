@@ -1,5 +1,5 @@
 import {connectDB} from './db'
-import setupRoutes from './routes'
+import {setupSocket} from './socket'
 import app from './routes'
 
 connectDB()
