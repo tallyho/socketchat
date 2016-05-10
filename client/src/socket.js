@@ -24,10 +24,11 @@ const connectSocket = () => {
 export default (store) => {
   store.subscribe(() => {
     const state = store.getState()
-    if (socket === null && state.user.get('token') != null) {
+    console.log("state:", state)
+    if (socket === null && state.user.token != null) {
       console.log("connecting socket")
       connectSocket()
-    } else if (socket !== null && state.user.get('token') == null) {
+    } else if (socket !== null && state.user.token == null) {
       console.log("disconnecting socket")
       socket.disconnect()
       socket = null

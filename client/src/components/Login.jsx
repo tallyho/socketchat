@@ -74,9 +74,9 @@ class Login extends React.Component {
   render() {
     const user = this.props.user
 
-    if (user.get('email')) {
+    if (user.email) {
       return <div>
-        Signed in as {user.get('email')} (<button onClick={this.props.logout}>Logout</button>)
+        Signed in as {user.email} (<button onClick={this.props.logout}>Logout</button>)
         </div>
     } else {
       return <div>

@@ -1,4 +1,3 @@
-import {Map} from 'immutable'
 
 export function login(email, token) {
   return {
@@ -14,20 +13,20 @@ export function logout() {
   }
 }
 
-const INITIAL_STATE = Map({
+const INITIAL_STATE = {
   'email': null,
   'token': null,
-})
+}
 
 export function user(state = INITIAL_STATE, action) {
   switch(action.type) {
   case 'LOGIN':
-    return state.merge({
+    return Object.assign({}, state, {
       'email': action.email,
       'token': action.token
     })
   case 'LOGOUT':
-    return state.merge({
+    return Object.assign({}, state, {
       'email': null,
       'token': null
     })
