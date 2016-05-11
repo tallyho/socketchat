@@ -12,8 +12,9 @@ app.use(bodyParser.json())
 
 // allow client to request stuff
 app.all('*', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", "http://localhost:8080");
   res.header("Access-Control-Allow-Headers", "Content-Type");
+  res.header("Access-Control-Allow-Credentials", "true");
   next();
  });
 
@@ -35,7 +36,7 @@ app.post('/login', (req, res) => {
         return Promise.reject('invalid password')
       }
 
-      const token = jwt.sign(user, 'abc123')
+      const token = jwt.sign(user, jwtSecret)
       res.json({status: 'success', token})
     }).catch((error) => {
       res.json({status: 'failed', reason: error})
