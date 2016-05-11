@@ -14,6 +14,11 @@ const UserSchema = mongoose.Schema({
   passwordSalt: {
     type: String,
     require: true
+  },
+
+  channels: {
+    type: [mongoose.Schema.Types.ObjectId],
+    default: []
   }
 })
 

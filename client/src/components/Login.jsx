@@ -56,7 +56,6 @@ class Login extends React.Component {
   }
 
   async loginClicked() {
-    console.log("login")
     try {
       const data = await this.fetchRoute('login')
       this.props.login(this.refs.handle.value, data.token)
@@ -64,10 +63,8 @@ class Login extends React.Component {
   }
 
   async registerClicked() {
-    console.log("registering")
     try {
       const data = await this.fetchRoute('register')
-      console.log(data)
     } catch (err) { return }
   }
 

@@ -33,7 +33,7 @@ app.post('/login', (req, res) => {
       if (passwordHash != user.passwordHash)
         throw Error('The username/password is invalid.')
 
-      const token = jwt.sign(user, jwtSecret)
+      const token = jwt.sign({handle: user.handle}, jwtSecret)
       res.json({status: 'success', token})
     }).catch((error) => {
       var message = error.message

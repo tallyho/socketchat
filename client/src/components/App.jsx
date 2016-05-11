@@ -18,15 +18,23 @@ class App extends React.Component {
           <div>Socket Chat 1.0</div>
           <div><Login /></div>
         </div>
+        {this.props.user.token ?
         <div class="bottom">
           <ChannelList />
           <ChatBox />
           <UserList />
         </div>
+        :null}
       </div>
     )
   }
 }
 
 
-export default connect((state) => ({ site: state.site }))(App)
+export default connect(
+  (state) => ({
+    site: state.site,
+    user: state.user,
+  })
+)(App)
+

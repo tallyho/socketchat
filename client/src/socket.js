@@ -1,6 +1,6 @@
 import io from 'socket.io-client'
 
-var socket = null
+export var socket = null
 
 const connectSocket = (token) => {
   socket = io.connect('http://localhost:8081', {
