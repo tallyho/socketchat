@@ -1,10 +1,14 @@
 import React from 'react'
+import {connect} from 'react-redux'
+
 import Login from './Login'
 
-export default class App extends React.Component {
+class App extends React.Component {
   render() {
     return (
-    <div><Login /></div>
+      <div>{this.props.site.hydrated ? <Login /> : null}</div>
   )}
 }
 
+
+export default connect((state) => ({ site: state.site }))(App)

@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {login, logout} from '../user'
+import {login, logout} from '../reducers/user'
 import fetch from 'isomorphic-fetch'
 
 class Login extends React.Component {

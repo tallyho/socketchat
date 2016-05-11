@@ -1,4 +1,3 @@
-
 export function login(email, token) {
   return {
     type: 'LOGIN',

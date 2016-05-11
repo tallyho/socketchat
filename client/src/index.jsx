@@ -4,12 +4,15 @@ import {createStore, combineReducers} from 'redux'
 import {persistStore, autoRehydrate} from 'redux-persist'
 import {Provider} from 'react-redux'
 
-import {user} from './user'
+import {user} from './reducers/user'
+import {site} from './reducers/site'
 import App from './components/App'
 import setupSocket from './socket'
 
-const store = createStore(combineReducers({user}), undefined, autoRehydrate())
-persistStore(store)
+const store = createStore(combineReducers({user, site}), undefined, autoRehydrate())
+persistStore(store, {
+  blacklist: ['site']
+})
 
 setupSocket(store)
 

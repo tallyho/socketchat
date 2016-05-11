@@ -3,7 +3,7 @@ import io from 'socket.io-client'
 var socket = null
 
 const connectSocket = () => {
-  socket = io.connect('http://localhost:3000')
+  socket = io.connect('http://localhost:8081')
 
   const states = [
     'connect',
@@ -19,6 +19,10 @@ const connectSocket = () => {
       console.log('socket:', socket.connected)
     })
   }
+
+  socket.on('news', (data) => {
+    console.log("news!", data)
+  })
 }
 
 export default (store) => {
