@@ -36,34 +36,34 @@ describe('POST /register', () => {
   it('missing arguments', (done) => {
     request.post('/register')
     .send({})
-    .expect({status: 'failed', reason: 'missing arguments'}, done)
+    .expect({status: 'failed', reason: 'Please enter both username and password.'}, done)
   })
 
-  it('invalid email', (done) => {
+  it('invalid handle', (done) => {
     request.post('/register')
-    .send({email: '123123', password: '12345678'})
-    .expect({status: 'failed', reason: 'invalid email'}, done)
+    .send({handle: '12', password: '12345678'})
+    .expect({status: 'failed', reason: 'The username must be more than 3 characters.'}, done)
   })
   
   it('invalid password', (done) => {
     request.post('/register')
-    .send({email: 'bob@bob.com', password: '1234'})
-    .expect({status: 'failed', reason: 'invalid password'}, done)
+    .send({handle: 'walla', password: '1234'})
+    .expect({status: 'failed', reason: 'The password must be more than 7 characters.'}, done)
   })
 
   it('success', (done) => {
     request.post('/register')
-    .send({email: 'bob@bob.com', password: '12345678'})
+    .send({handle: 'walla', password: '12345678'})
     .expect({status: 'success'}, done)
   })
 
-  it('duplicate email', (done) => {
+  it('duplicate handle', (done) => {
     request.post('/register')
-    .send({email: 'bob@bob.com', password: '12345678'})
+    .send({handle: 'walla', password: '12345678'})
     .expect({status: 'success'}, () => {
       request.post('/register')
-      .send({email: 'bob@bob.com', password: '12345678'})
-      .expect({status: 'failed', reason:'duplicate email'}, done)
+      .send({handle: 'walla', password: '12345678'})
+      .expect({status: 'failed', reason:'The username is already registered.'}, done)
     })
   })
 })
@@ -72,31 +72,31 @@ describe('POST /login', () => {
   it('missing arguments', (done) => {
     request.post('/login')
     .send({})
-    .expect({status: 'failed', reason: 'missing arguments'}, done)
+    .expect({status: 'failed', reason: 'Please enter both username and password.'}, done)
   })
 
   it('invalid user', (done) => {
     request.post('/login')
-    .send({email: 'bob@bob.com', password: '1234'})
-    .expect({status: 'failed', reason: 'invalid user'}, done)
+    .send({handle: 'bob@bob.com', password: '1234'})
+    .expect({status: 'failed', reason: 'The username/password is invalid.'}, done)
   })
 
   it('to user with bad password', (done) => {
     request.post('/register')
-    .send({email: 'bob@bob.com', password: '12345678'})
+    .send({handle: 'bob@bob.com', password: '12345678'})
     .expect({status: 'success'}, () => {
       request.post('/login')
-      .send({email: 'bob@bob.com', password: '1234'})
-      .expect({status: 'failed', reason: 'invalid password'}, done)
+      .send({handle: 'bob@bob.com', password: '1234'})
+      .expect({status: 'failed', reason: 'The username/password is invalid.'}, done)
     })
   })
 
   it('to user with good password', (done) => {
     request.post('/register')
-    .send({email: 'bob@bob.com', password: '12345678'})
+    .send({handle: 'bob@bob.com', password: '12345678'})
     .expect({status: 'success'}, () => {
       request.post('/login')
-      .send({email: 'bob@bob.com', password: '12345678'})
+      .send({handle: 'bob@bob.com', password: '12345678'})
       .end((error, res) => {
         expect(res.body).to.have.property('status');
         expect(res.body.status).to.equal('success');

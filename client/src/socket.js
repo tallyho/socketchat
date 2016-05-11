@@ -2,8 +2,10 @@ import io from 'socket.io-client'
 
 var socket = null
 
-const connectSocket = () => {
-  socket = io.connect('http://localhost:8081')
+const connectSocket = (token) => {
+  socket = io.connect('http://localhost:8081', {
+    query: 'token=' + token
+  })
 
   const states = [
     'connect',
@@ -31,7 +33,7 @@ export default (store) => {
     console.log("state:", state)
     if (socket === null && state.user.token != null) {
       console.log("connecting socket")
-      connectSocket()
+      connectSocket(state.user.token)
     } else if (socket !== null && state.user.token == null) {
       console.log("disconnecting socket")
       socket.disconnect()

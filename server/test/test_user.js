@@ -1,14 +1,14 @@
-import {User} from '../db'
+import {User} from '../db/user'
 import {assert} from 'chai'
 
 describe('User Mongoose Model', () => {
-  it('valid email bob@bob.com', (done) => {
-    assert(User.validateEmail('bob@bob.com'))
+  it('valid handle bobo', (done) => {
+    assert(User.validateHandle('bobo'))
     done()
   })
 
-  it('valid email bob123@bob.com', (done) => {
-    assert(User.validateEmail('bob123@bob.com'))
+  it('invalid email abc', (done) => {
+    assert(!User.validateHandle('abc'))
     done()
   })
 })

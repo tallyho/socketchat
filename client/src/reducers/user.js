@@ -1,7 +1,7 @@
-export function login(email, token) {
+export function login(handle, token) {
   return {
     type: 'LOGIN',
-    email,
+    handle,
     token
   }
 }
@@ -13,21 +13,21 @@ export function logout() {
 }
 
 const INITIAL_STATE = {
-  'email': null,
-  'token': null,
+  handle: null,
+  token: null,
 }
 
 export function user(state = INITIAL_STATE, action) {
   switch(action.type) {
   case 'LOGIN':
     return Object.assign({}, state, {
-      'email': action.email,
-      'token': action.token
+      handle: action.handle,
+      token: action.token
     })
   case 'LOGOUT':
     return Object.assign({}, state, {
-      'email': null,
-      'token': null
+      handle: null,
+      token: null
     })
   default:
     return state

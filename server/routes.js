@@ -4,8 +4,7 @@ import Promise from 'bluebird'
 import jwt from 'jsonwebtoken'
 
 import {jwtSecret} from './config'
-import {User} from './db'
-
+import {User} from './db/user'
 
 const app = express()
 app.use(bodyParser.json())
@@ -19,61 +18,64 @@ app.all('*', function(req, res, next) {
  });
 
 app.post('/login', (req, res) => {
-  const {email, password} = req.body;
-  if (!email || !password) {
-    res.json({status:'failed', reason: 'missing arguments'})
+  const {handle, password} = req.body;
+  if (!handle || !password) {
+    res.json({status:'failed', reason: 'Please enter both username and password.'})
     return
   }
 
-  User.findOne({email})
+  User.findOne({handle})
     .then((user) => {
-      if (user === null) {
-        return Promise.reject('invalid user')
-      }
+      if (user === null)
+        throw Error('The username/password is invalid.')
 
       const passwordHash = User.makePasswordHash(password, user.passwordSalt)
-      if (passwordHash != user.passwordHash) {
-        return Promise.reject('invalid password')
-      }
+      if (passwordHash != user.passwordHash)
+        throw Error('The username/password is invalid.')
 
       const token = jwt.sign(user, jwtSecret)
       res.json({status: 'success', token})
     }).catch((error) => {
-      res.json({status: 'failed', reason: error})
+      var message = error.message
+      if (!(error instanceof Error))
+        message = 'Internal server error. Try again later.'
+      res.json({status: 'failed', reason: message})
     })
 })
 
 app.post('/register', (req, res) => {
-  const {email, password} = req.body;
-  if (!email || !password) {
-    res.json({status:'failed', reason: 'missing arguments'})
+  const {handle, password} = req.body;
+  if (!handle || !password) {
+    res.json({status:'failed', reason: 'Please enter both username and password.'})
     return
   }
 
-  if (!User.validateEmail(email)) {
-    res.json({status:'failed', reason: 'invalid email'})
+  if (!User.validateHandle(handle)) {
+    res.json({status:'failed', reason: 'The username must be more than 3 characters.'})
     return
   } else if (!User.validatePassword(password)) {
-    res.json({status:'failed', reason: 'invalid password'})
+    res.json({status:'failed', reason: 'The password must be more than 7 characters.'})
     return
   }
 
-  User.findOne({email})
+  User.findOne({handle})
     .then((obj) => {
-      if (obj !== null) {
-        return Promise.reject('duplicate email')
-      }
+      if (obj !== null)
+        throw Error('The username is already registered.')
 
       const passwordSalt = User.makePasswordSalt()
       const passwordHash = User.makePasswordHash(password, passwordSalt);
 
-      return User.create({email, passwordSalt, passwordHash})
+      return User.create({handle, passwordSalt, passwordHash})
     })
     .then((user) => {
       res.json({status:'success'})
     })
     .catch((error) => {
-      res.json({status:'failed', reason: error})
+      var message = error.message
+      if (!(error instanceof Error))
+        message = 'Internal server error. Try again later.'
+      res.json({status:'failed', reason: message})
     })
 })
 

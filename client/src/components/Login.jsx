@@ -13,19 +13,22 @@ class Login extends React.Component {
     this.handleKeyPress = this.handleKeyPress.bind(this)
   }
 
-  validateEmail(email) {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
+  validateHandle(handle) {
+    return handle && handle.length >= 4
+  }
+
+  validatePassword(password) {
+    return password && password.length >= 8
   }
 
   async fetchRoute(route) {
-    const email = this.refs.email.value
+    const handle = this.refs.handle.value
     const password = this.refs.password.value
-    if (!email || !this.validateEmail(email)) {
-      this.setState({message: 'Please enter a valid email address.'})
+    if (!this.validateHandle(handle)) {
+      this.setState({message: 'The username must be more than 3 characters.'})
       throw new Error()
-    } else if (!password || password < 8) {
-      this.setState({message: 'Invalid password. Must be > 8 characters.'})
+    } else if (!this.validatePassword(password)) {
+      this.setState({message: 'The password must be more than 7 characters.'})
       throw new Error()
     }
 
@@ -36,7 +39,7 @@ class Login extends React.Component {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         }),
-        body: JSON.stringify({email, password})
+        body: JSON.stringify({handle, password})
       })
 
       const data = await response.json()
@@ -46,15 +49,17 @@ class Login extends React.Component {
 
       return data
     } catch (err) {
+      console.log(err)
       this.setState({message: err.message})
       throw err
     }
   }
 
   async loginClicked() {
+    console.log("login")
     try {
       const data = await this.fetchRoute('login')
-      this.props.login(this.refs.email.value, data.token)
+      this.props.login(this.refs.handle.value, data.token)
     } catch (err) { return }
   }
 
@@ -74,14 +79,14 @@ class Login extends React.Component {
   render() {
     const user = this.props.user
 
-    if (user.email) {
+    if (user.handle) {
       return <div>
-        Signed in as {user.email} (<button onClick={this.props.logout}>Logout</button>)
+        Signed in as {user.handle} (<button onClick={this.props.logout}>Logout</button>)
         </div>
     } else {
       return <div>
         <div>
-          <input type="text" placeholder="Email" ref="email" />
+          <input type="text" placeholder="Username" ref="handle" />
           <input type="password" placeholder="Password" ref="password" onKeyPress={this.handleKeyPress} />
           <button onClick={this.loginClicked}>Login</button>
           <button onClick={this.registerClicked}>Register</button>
